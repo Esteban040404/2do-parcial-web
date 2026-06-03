@@ -1,0 +1,24 @@
+meta {
+  name: Login - Admin
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "admin@stockflow.com",
+    "password": "admin123"
+  }
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setEnvVar("adminToken", res.body.token);
+  }
+}

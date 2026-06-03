@@ -1,0 +1,24 @@
+meta {
+  name: Login - Operator
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "operator@stockflow.com",
+    "password": "operator123"
+  }
+}
+
+script:post-response {
+  if (res.status === 200) {
+    bru.setEnvVar("operatorToken", res.body.token);
+  }
+}

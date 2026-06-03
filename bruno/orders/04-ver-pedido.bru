@@ -1,0 +1,15 @@
+meta {
+  name: Ver Detalles de Pedido
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{base_url}}/api/orders/1
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}

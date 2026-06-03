@@ -1,0 +1,22 @@
+meta {
+  name: Actualizar Producto (ADMIN)
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{base_url}}/api/products/1
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "price": 1199.99,
+    "stock": 10
+  }
+}

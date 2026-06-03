@@ -1,0 +1,15 @@
+meta {
+  name: Ver Pedido Inexistente (404)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{base_url}}/api/orders/9999
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}

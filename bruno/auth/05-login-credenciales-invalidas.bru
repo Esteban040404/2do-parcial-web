@@ -1,0 +1,18 @@
+meta {
+  name: Login - Credenciales Invalidas (401)
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{base_url}}/api/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "admin@stockflow.com",
+    "password": "contraseña_incorrecta"
+  }
+}

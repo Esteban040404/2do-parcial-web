@@ -1,0 +1,267 @@
+### StockFlow API - Colección de pruebas
+### Requiere la extensión REST Client de VSCode
+### Arrancar servidor: npm run dev
+
+@base = http://localhost:3000
+@adminToken = REEMPLAZAR_CON_TOKEN_DE_LOGIN
+@operatorToken = REEMPLAZAR_CON_TOKEN_DE_LOGIN
+
+
+### ─── AUTH ─────────────────────────────────────────────────────────────────
+
+### 1. Registrar usuario ADMIN
+POST {{base}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "nuevoadmin@stockflow.com",
+  "password": "admin123",
+  "role": "ADMIN"
+}
+
+###
+
+### 2. Registrar usuario OPERATOR
+POST {{base}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "nuevooperator@stockflow.com",
+  "password": "operator123",
+  "role": "OPERATOR"
+}
+
+###
+
+### 3. Login ADMIN (copiar token en @adminToken)
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@stockflow.com",
+  "password": "admin123"
+}
+
+###
+
+### 4. Login OPERATOR (copiar token en @operatorToken)
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "operator@stockflow.com",
+  "password": "operator123"
+}
+
+###
+
+### 5. Login con credenciales incorrectas (esperado: 401)
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@stockflow.com",
+  "password": "wrongpassword"
+}
+
+###
+
+### 6. Login con body inválido (esperado: 400 Zod)
+POST {{base}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "no-es-un-email"
+}
+
+
+### ─── PRODUCTOS ──────────────────────────────────────────────────────────────
+
+### 7. Listar todos los productos (autenticado)
+GET {{base}}/api/products
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 8. Listar productos filtrados por categoría (categoryId=1)
+GET {{base}}/api/products?categoryId=1
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 9. Crear producto (ADMIN)
+POST {{base}}/api/products
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "name": "Teclado Mecánico",
+  "sku": "ELEC-003",
+  "stock": 20,
+  "minStock": 5,
+  "price": 89.99,
+  "categoryId": 1
+}
+
+###
+
+### 10. Crear producto sin token (esperado: 401)
+POST {{base}}/api/products
+Content-Type: application/json
+
+{
+  "name": "Producto sin auth",
+  "sku": "X-001",
+  "stock": 10,
+  "minStock": 2,
+  "price": 9.99,
+  "categoryId": 1
+}
+
+###
+
+### 11. Crear producto como OPERATOR (esperado: 403)
+POST {{base}}/api/products
+Content-Type: application/json
+Authorization: Bearer {{operatorToken}}
+
+{
+  "name": "Producto prohibido",
+  "sku": "X-002",
+  "stock": 10,
+  "minStock": 2,
+  "price": 9.99,
+  "categoryId": 1
+}
+
+###
+
+### 12. Actualizar producto (ADMIN)
+PUT {{base}}/api/products/1
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "price": 1199.99,
+  "stock": 10
+}
+
+###
+
+### 13. Eliminar producto (ADMIN)
+DELETE {{base}}/api/products/4
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 14. Eliminar producto inexistente (esperado: 404)
+DELETE {{base}}/api/products/9999
+Authorization: Bearer {{adminToken}}
+
+
+### ─── REPORTES ────────────────────────────────────────────────────────────────
+
+### 15. Reporte de stock bajo (ADMIN)
+GET {{base}}/api/reports/low-stock
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 16. Reporte de stock bajo como OPERATOR (esperado: 403)
+GET {{base}}/api/reports/low-stock
+Authorization: Bearer {{operatorToken}}
+
+
+### ─── PEDIDOS ────────────────────────────────────────────────────────────────
+
+### 17. Crear pedido exitoso (stock suficiente)
+POST {{base}}/api/orders
+Content-Type: application/json
+Authorization: Bearer {{operatorToken}}
+
+{
+  "items": [
+    { "productId": 1, "quantity": 1 },
+    { "productId": 3, "quantity": 3 }
+  ]
+}
+
+###
+
+### 18. Crear pedido con stock insuficiente (esperado: 400 + rollback)
+POST {{base}}/api/orders
+Content-Type: application/json
+Authorization: Bearer {{operatorToken}}
+
+{
+  "items": [
+    { "productId": 2, "quantity": 999 }
+  ]
+}
+
+###
+
+### 19. Crear pedido con body inválido (esperado: 400 Zod)
+POST {{base}}/api/orders
+Content-Type: application/json
+Authorization: Bearer {{operatorToken}}
+
+{
+  "items": []
+}
+
+###
+
+### 20. Ver detalles de un pedido
+GET {{base}}/api/orders/1
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 21. Ver pedido inexistente (esperado: 404)
+GET {{base}}/api/orders/9999
+Authorization: Bearer {{adminToken}}
+
+###
+
+### 22. Cambiar estado a DISPATCHED
+PATCH {{base}}/api/orders/1/status
+Content-Type: application/json
+Authorization: Bearer {{operatorToken}}
+
+{
+  "status": "DISPATCHED"
+}
+
+###
+
+### 23. Cancelar pedido (reintegra stock automáticamente)
+PATCH {{base}}/api/orders/1/status
+Content-Type: application/json
+Authorization: Bearer {{operatorToken}}
+
+{
+  "status": "CANCELLED"
+}
+
+###
+
+### 24. Intentar actualizar pedido ya cancelado (esperado: 400)
+PATCH {{base}}/api/orders/1/status
+Content-Type: application/json
+Authorization: Bearer {{operatorToken}}
+
+{
+  "status": "DISPATCHED"
+}
+
+###
+
+### 25. Status inválido (esperado: 400 Zod)
+PATCH {{base}}/api/orders/1/status
+Content-Type: application/json
+Authorization: Bearer {{operatorToken}}
+
+{
+  "status": "INVALIDO"
+}

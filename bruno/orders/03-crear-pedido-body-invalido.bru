@@ -1,0 +1,21 @@
+meta {
+  name: Crear Pedido - Body Invalido (400 Zod)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/orders
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{operatorToken}}
+}
+
+body:json {
+  {
+    "items": []
+  }
+}

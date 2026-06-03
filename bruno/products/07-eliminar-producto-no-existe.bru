@@ -1,0 +1,15 @@
+meta {
+  name: Eliminar Producto Inexistente (404)
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{base_url}}/api/products/9999
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}

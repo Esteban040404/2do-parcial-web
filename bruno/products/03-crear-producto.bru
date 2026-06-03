@@ -1,0 +1,26 @@
+meta {
+  name: Crear Producto (ADMIN)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/products
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+body:json {
+  {
+    "name": "Teclado Mecánico",
+    "sku": "ELEC-003",
+    "stock": 20,
+    "minStock": 5,
+    "price": 89.99,
+    "categoryId": 1
+  }
+}

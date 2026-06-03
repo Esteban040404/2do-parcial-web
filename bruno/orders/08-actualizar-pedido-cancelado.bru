@@ -1,0 +1,21 @@
+meta {
+  name: Actualizar Pedido ya Cancelado (400)
+  type: http
+  seq: 8
+}
+
+patch {
+  url: {{base_url}}/api/orders/1/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{operatorToken}}
+}
+
+body:json {
+  {
+    "status": "DISPATCHED"
+  }
+}

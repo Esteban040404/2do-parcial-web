@@ -1,0 +1,23 @@
+meta {
+  name: Crear Pedido - Stock Insuficiente (400 Rollback)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/orders
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{operatorToken}}
+}
+
+body:json {
+  {
+    "items": [
+      { "productId": 2, "quantity": 999 }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+meta {
+  name: Registro - Operator
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{base_url}}/api/auth/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "nuevooperator@stockflow.com",
+    "password": "operator123",
+    "role": "OPERATOR"
+  }
+}

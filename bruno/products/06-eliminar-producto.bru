@@ -1,0 +1,15 @@
+meta {
+  name: Eliminar Producto (ADMIN)
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{base_url}}/api/products/4
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}

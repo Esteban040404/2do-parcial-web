@@ -1,0 +1,15 @@
+meta {
+  name: Reporte Stock Bajo (ADMIN)
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/reports/low-stock
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}

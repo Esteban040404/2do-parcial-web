@@ -1,0 +1,26 @@
+meta {
+  name: Crear Producto como OPERATOR (403)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{base_url}}/api/products
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{operatorToken}}
+}
+
+body:json {
+  {
+    "name": "Producto Prohibido",
+    "sku": "X-001",
+    "stock": 10,
+    "minStock": 2,
+    "price": 9.99,
+    "categoryId": 1
+  }
+}

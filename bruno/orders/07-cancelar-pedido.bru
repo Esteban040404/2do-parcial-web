@@ -1,0 +1,21 @@
+meta {
+  name: Cancelar Pedido (Reintegra Stock)
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{base_url}}/api/orders/1/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{operatorToken}}
+}
+
+body:json {
+  {
+    "status": "CANCELLED"
+  }
+}
